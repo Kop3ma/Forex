@@ -1,0 +1,44 @@
+//@version=5
+indicator(title="Double Moving Average", shorttitle="Double MA", overlay=true, timeframe="", timeframe_gaps=true)
+
+ma(source, length, type) =>
+    switch type
+        "SMA" => ta.sma(source, length)
+        "EMA" => ta.ema(source, length)
+        "SMMA (RMA)" => ta.rma(source, length)
+        "WMA" => ta.wma(source, length)
+        "VWMA" => ta.vwma(source, length)
+
+len1 = input.int(9, minval=1, maxval=9999, title="Length", group="MA 1")
+src1 = input.source(close, title="Source", group="MA 1")
+offset1 = input.int(0, minval=-500, maxval=500, title="Offset", group="MA 1")
+type1 = input.string("SMA", title="Method", options=["SMA","EMA","SMMA (RMA)","WMA","VWMA"], group="MA 1")
+col1 = input.color(color.blue, title="Color", group="MA 1")
+width1 = input.int(1, minval=1, maxval=5, title="Line Width", group="MA 1")
+smoothType1 = input.string("SMA", title="Smoothing Method", options=["SMA","EMA","SMMA (RMA)","WMA","VWMA"], group="MA 1 Smoothing")
+smoothLen1 = input.int(5, minval=1, maxval=100, title="Smoothing Length", group="MA 1 Smoothing")
+showSmooth1 = input.bool(false, title="Show Smoothing Line", group="MA 1 Smoothing")
+smoothCol1 = input.color(#f37f20, title="Smoothing Color", group="MA 1 Smoothing")
+
+len2 = input.int(200, minval=1, maxval=9999, title="Length", group="MA 2")
+src2 = input.source(close, title="Source", group="MA 2")
+offset2 = input.int(0, minval=-500, maxval=500, title="Offset", group="MA 2")
+type2 = input.string("SMMA (RMA)", title="Method", options=["SMA","EMA","SMMA (RMA)","WMA","VWMA"], group="MA 2")
+col2 = input.color(color.red, title="Color", group="MA 2")
+width2 = input.int(1, minval=1, maxval=5, title="Line Width", group="MA 2")
+smoothType2 = input.string("SMA", title="Smoothing Method", options=["SMA","EMA","SMMA (RMA)","WMA","VWMA"], group="MA 2 Smoothing")
+smoothLen2 = input.int(5, minval=1, maxval=100, title="Smoothing Length", group="MA 2 Smoothing")
+showSmooth2 = input.bool(false, title="Show Smoothing Line", group="MA 2 Smoothing")
+smoothCol2 = input.color(#f37f20, title="Smoothing Color", group="MA 2 Smoothing")
+
+out1 = ma(src1, len1, type1)
+smoothingLine1 = ma(out1, smoothLen1, smoothType1)
+
+out2 = ma(src2, len2, type2)
+smoothingLine2 = ma(out2, smoothLen2, smoothType2)
+
+plot(out1, title="MA 1", color=col1, linewidth=width1, offset=offset1)
+plot(smoothingLine1, title="MA 1 Smoothing", color=smoothCol1, linewidth=1, offset=offset1, display=showSmooth1 ? display.all : display.none)
+
+plot(out2, title="MA 2", color=col2, linewidth=width2, offset=offset2)
+plot(smoothingLine2, title="MA 2 Smoothing", color=smoothCol2, linewidth=1, offset=offset2, display=showSmooth2 ? display.all : display.none)

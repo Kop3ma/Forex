@@ -1,0 +1,38 @@
+//@version=5
+indicator("Double MA (2-in-1)", overlay=true, max_lines_count=500)
+
+// ─── MA 1 ───────────────────────────────────────────
+ma1_length = input.int(200, title="MA 1 - Length", group="Moving Average 1")
+ma1_source = input.source(close, title="MA 1 - Source", group="Moving Average 1")
+ma1_offset = input.int(0, title="MA 1 - Offset", group="Moving Average 1")
+ma1_method = input.string("SMMA (RMA)", title="MA 1 - Method", 
+             options=["SMA", "EMA", "SMMA (RMA)", "WMA", "VWMA"], 
+             group="Moving Average 1")
+ma1_color  = input.color(color.red, title="MA 1 - Color", group="Moving Average 1")
+ma1_width  = input.int(2, title="MA 1 - Line Width", minval=1, maxval=5, group="Moving Average 1")
+
+// ─── MA 2 ───────────────────────────────────────────
+ma2_length = input.int(50, title="MA 2 - Length", group="Moving Average 2")
+ma2_source = input.source(close, title="MA 2 - Source", group="Moving Average 2")
+ma2_offset = input.int(0, title="MA 2 - Offset", group="Moving Average 2")
+ma2_method = input.string("EMA", title="MA 2 - Method", 
+             options=["SMA", "EMA", "SMMA (RMA)", "WMA", "VWMA"], 
+             group="Moving Average 2")
+ma2_color  = input.color(color.green, title="MA 2 - Color", group="Moving Average 2")
+ma2_width  = input.int(2, title="MA 2 - Line Width", minval=1, maxval=5, group="Moving Average 2")
+
+// ─── Calculate MA ────────────────────────────────────
+f_ma(src, length, method) =>
+    switch method
+        "SMA"       => ta.sma(src, length)
+        "EMA"       => ta.ema(src, length)
+        "SMMA (RMA)"=> ta.rma(src, length)
+        "WMA"       => ta.wma(src, length)
+        "VWMA"      => ta.vwma(src, length)
+
+ma1 = f_ma(ma1_source, ma1_length, ma1_method)
+ma2 = f_ma(ma2_source, ma2_length, ma2_method)
+
+// ─── Plot ────────────────────────────────────────────
+plot(ma1, title="MA 1", color=ma1_color, linewidth=ma1_width, offset=ma1_offset)
+plot(ma2, title="MA 2", color=ma2_color, linewidth=ma2_width, offset=ma2_offset)
